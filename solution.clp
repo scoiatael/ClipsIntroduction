@@ -195,7 +195,7 @@
    (not (game-ended))
     (not (hist-fact great-situation))
     (hist-fact cards good)
-    (hist-fact oponnents good)
+    (hist-fact oponnents good|medium)
     =>
     (assert (hist-fact great-situation))
     (assert (is-fact situation good))
@@ -205,7 +205,7 @@
    (not (game-ended))
     (not (hist-fact oponnents-bluffing))
     (hist-fact cards good)
-    (hist-fact oponnents bad)
+    (hist-fact oponnents bad|medium)
     =>
     (assert (hist-fact oponnents-bluffing))
     (if (ask "Is it possible your oponnents are bluffing?")
@@ -217,8 +217,8 @@
 (defrule hist-bad-cards-good-oponnents
    (not (game-ended))
     (not (hist-fact should-bluff))
-    (hist-fact cards bad)
-    (hist-fact oponnents good)
+    (hist-fact cards bad|medium)
+    (hist-fact oponnents good|medium)
     =>
     (assert (hist-fact should-bluff))
     (if (ask "Do you feel confident bluffing?")
