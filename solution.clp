@@ -19,13 +19,6 @@
           then (bind ?answer (lowcase ?answer))))
    ?answer)
 
-;;;(defrule uncertainity-wins
-;;;   ?f <- (certainity 0)
-;;;   (not (is-fact $?))
-;;;  =>
-;;;   (retract ?f)
-;;;   (answer "fold"))
-
 (deffunction ask ($?what)
    (printout t $?what)
    (bind ?response (ask-question "" yes no y n))
@@ -33,8 +26,27 @@
        then TRUE 
        else FALSE))
 
-(defrule uncertainity-wins2
+(deffunction make-sure (?what ?how)
+    ask "Are you sure that " ?what " are " ?how)
+
+(defrule sanity-check
+   (not (sanity-checked))
+   ?f <- (certainity ?x)
+   (test (> 2 ?x))
+  =>
+   (assert (sanity-checked))
+   (if (ask "Do you play this game first time?")
+    then
+    (printout t "Better check some tutorials -- here's one: http://entertainment.howstuffworks.com/how-to-play-texas-holdem-poker1.htm" crlf)
+    (retract ?f)
+    (assert (certainity (+ ?x 1)))
+    else
+    (retract ?f)
+    (assert (certainity (- ?x 1)))))
+
+(defrule uncertainity-wins
    (not (game-ended))
+   (sanity-checked)
    ?f <- (certainity ?x)
    ?c <- (situation $?)
    (test (> 2 ?x))
@@ -45,9 +57,9 @@
    (printout t "Your estimation is not to be trusted" crlf)
    (if (ask "Do you have much to lose?")
     then
-   	(answer "fold")
+   	(answer "pass")
     else 
-	  (answer "pass")))
+	  (answer "fold")))
 
 (defrule assess-situation
    (declare (salience -2))
@@ -97,9 +109,6 @@
    (situation 2)
    (questions)
 	)
-
-(deffunction make-sure (?what ?how)
-    ask "Are you sure that " ?what " are " ?how)
 
 (defrule type-reaction-good
     (declare (salience -1))
